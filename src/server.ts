@@ -34,10 +34,10 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   //@TODO1 SOLUTION
   app.get('/filteredimage',async(request,response)=>{
     //parsing the parameter recived from the query
-    let { image_url} = requset.query;
+    let { image_url} = request.query;
     
     if(!image_url)
-       return res.status(422).send('Invalid parameter observed!');
+       return response.status(422).send('Invalid parameter observed!');
     
     image_url = image_url.toString();
     let filteredPath : string = '';
@@ -49,15 +49,15 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
       ||  image_url.slice(-3) !== 'jpg';
 
       if(invalidProtocol)
-      return res.status(422).send('Invalid image etension or url');
+      return response.status(422).send('Invalid image extension or url');
       filteredPath = await filterImageFromURL(image_url);
-      res.status(200).sendFile(filteredPath);
+      response.status(200).sendFile(filteredPath);
       setTimeout(() => deleteLocalFiles([filteredPath]),1000);
 
     }
     catch (error){
       console.log(error);
-      res.status(500).send('Server Error or the requested image url removed for some reason');
+      response.status(500).send('Server Error or the requested image url removed for some reason');
     }
   })
   //! END TODO1
