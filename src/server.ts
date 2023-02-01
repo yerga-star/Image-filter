@@ -31,21 +31,25 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   //! END @TODO1
 
-  //@TODO1 Solution
-  app.get('/filteredimage',async(req,res)=>{
-    let { image_url} = req.query;
+  //@TODO1 SOLUTION
+  app.get('/filteredimage',async(request,response)=>{
+    //parsing the parameter recived from the query
+    let { image_url} = requset.query;
+    
     if(!image_url)
-    return res.status(422).send('Empty Get Parameter image_url');
+       return res.status(422).send('Invalid parameter observed!');
+    
     image_url = image_url.toString();
     let filteredPath : string = '';
 
     try{
-      //Checking for the validity of request protocol
-      const isNotValid = (image_url.slice(0,4) !== 'http' && image_url.slice(0,5) !== 'https') 
+      //Checking weather the provided protocol is valid
+      //or not
+      const invalidProtocol = (image_url.slice(0,4) !== 'http' && image_url.slice(0,5) !== 'https') 
       ||  image_url.slice(-3) !== 'jpg';
 
-      if(isNotValid)
-      return res.status(422).send('Invalid Get parameter image_url');
+      if(invalidProtocol)
+      return res.status(422).send('Invalid image etension or url');
       filteredPath = await filterImageFromURL(image_url);
       res.status(200).sendFile(filteredPath);
       setTimeout(() => deleteLocalFiles([filteredPath]),1000);
