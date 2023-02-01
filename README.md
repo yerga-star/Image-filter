@@ -34,3 +34,5 @@ Follow the process described in the course to `eb init` a new application and `e
 ## test url 
 
 https://cdn.britannica.com/60/8160-050-08CCEABC/German-shepherd.jpg
+
+http://udagram-yerga-dev-dev.us-east-1.elasticbeanstalk.com/filteredimage?image_url=https://cdn.britannica.com/60/8160-050-08CCEABC/German-shepherd.jpg
