@@ -13,27 +13,10 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
 
-  // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
-  // GET /filteredimage?image_url={{URL}}
-  // endpoint to filter an image from a public url.
-  // IT SHOULD
-  //    1
-  //    1. validate the image_url query
-  //    2. call filterImageFromURL(image_url) to filter the image
-  //    3. send the resulting file in the response
-  //    4. deletes any files on the server on finish of the response
-  // QUERY PARAMATERS
-  //    image_url: URL of a publicly accessible image
-  // RETURNS
-  //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
-
-  /**************************************************************************** */
-
-  //! END @TODO1
-
   //@TODO1 SOLUTION
   app.get('/filteredimage',async(request,response)=>{
-    //parsing the parameter recived from the query
+
+    //parsing the parameter recived from the query sent
     let { image_url} = request.query;
     
     if(!image_url)
@@ -43,13 +26,12 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     let filteredPath : string = '';
 
     try{
-      //Checking weather the provided protocol is valid
-      //or not
-      const invalidProtocol = (image_url.slice(0,4) !== 'http' && image_url.slice(0,5) !== 'https') 
-      ||  image_url.slice(-3) !== 'jpg';
+      //Checking weather the provided protocol and extension is valid or not
 
-      if(invalidProtocol)
-      return response.status(422).send('Invalid image extension or url');
+     const invalidProtocol = (image_url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+      if(!invalidProtocol)
+      return response.status(422).send('Invalid URL or image extension');
+
       filteredPath = await filterImageFromURL(image_url);
       response.status(200).sendFile(filteredPath);
       setTimeout(() => deleteLocalFiles([filteredPath]),1000);
