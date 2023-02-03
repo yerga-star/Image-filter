@@ -13,47 +13,33 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
 
-  // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
-  // GET /filteredimage?image_url={{URL}}
-  // endpoint to filter an image from a public url.
-  // IT SHOULD
-  //    1
-  //    1. validate the image_url query
-  //    2. call filterImageFromURL(image_url) to filter the image
-  //    3. send the resulting file in the response
-  //    4. deletes any files on the server on finish of the response
-  // QUERY PARAMATERS
-  //    image_url: URL of a publicly accessible image
-  // RETURNS
-  //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
+  //@TODO1 SOLUTION
+  app.get('/filteredimage',async(request,response)=>{
 
-  /**************************************************************************** */
-
-  //! END @TODO1
-
-  //@TODO1 Solution
-  app.get('/filteredimage',async(req,res)=>{
-    let { image_url} = req.query;
+    //parsing the parameter recived from the query sent
+    let { image_url} = request.query;
+    
     if(!image_url)
-    return res.status(422).send('Empty Get Parameter image_url');
+       return response.status(422).send('Invalid parameter observed!');
+    
     image_url = image_url.toString();
     let filteredPath : string = '';
 
     try{
-      //Checking for the validity of request protocol
-      const isNotValid = (image_url.slice(0,4) !== 'http' && image_url.slice(0,5) !== 'https') 
-      ||  image_url.slice(-3) !== 'jpg';
+      //Checking weather the provided protocol and extension is valid or not
 
-      if(isNotValid)
-      return res.status(422).send('Invalid Get parameter image_url');
+     const invalidProtocol = (image_url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+      if(!invalidProtocol)
+      return response.status(422).send('Invalid URL or image extension');
+
       filteredPath = await filterImageFromURL(image_url);
-      res.status(200).sendFile(filteredPath);
+      response.status(200).sendFile(filteredPath);
       setTimeout(() => deleteLocalFiles([filteredPath]),1000);
 
     }
     catch (error){
       console.log(error);
-      res.status(500).send('Server Error or the requested image url removed for some reason');
+      response.status(500).send('Server Error or the requested image url removed for some reason');
     }
   })
   //! END TODO1
