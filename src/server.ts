@@ -19,12 +19,16 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     //parsing the parameter recived from the query sent
     let { image_url} = request.query;
     
-    if(!image_url)
-       return response.status(422).send('Invalid parameter observed!');
-    
-    image_url = image_url.toString();
-    let filteredPath : string = '';
+    if(image_url.length === 0){
+      return response.status(422).send('Empity URL observed!');
+    }
+       
+    else{
 
+      image_url = image_url.toString();
+      let imageFilterPath : string = '';
+  
+    
     try{
       //Checking weather the provided protocol and extension is valid or not
 
@@ -32,15 +36,16 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
       if(!invalidProtocol)
       return response.status(422).send('Invalid URL or image extension');
 
-      filteredPath = await filterImageFromURL(image_url);
-      response.status(200).sendFile(filteredPath);
-      setTimeout(() => deleteLocalFiles([filteredPath]),1000);
+      imageFilterPath = await filterImageFromURL(image_url);
+      response.status(200).sendFile(imageFilterPath);
+      setTimeout(() => deleteLocalFiles([imageFilterPath]),1000);
 
     }
-    catch (error){
-      console.log(error);
+    catch (e){
+      console.log(e);
       response.status(500).send('Server Error or the requested image url removed for some reason');
-    }
+    } 
+  }
   })
   //! END TODO1
   
