@@ -1,6 +1,7 @@
 import express,{Request,Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
+
 (async () => {
 
   // Init the Express application
@@ -19,7 +20,8 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     //it automatically sets the variable type to string 
     //to see that you can hover on the variable, 
     //with the help of QueryString.ParsedQs | string[] | QueryString.ParsedQs[] 
-    let { image_url}= req.query;
+    
+    let {image_url} : {image_url:string}= req.query as any;
     
     if(image_url.length === 0){
       return res.status(422).send('Empity URL observed!');
@@ -34,7 +36,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     try{
       //Checking weather the provided protocol and extension is valid or not
 
-     const invalidProtocol = (image_url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+     const invalidProtocol: string|boolean = (image_url.match(/\.(jpeg|jpg|gif|png)$/) != null);
       if(!invalidProtocol)
       return res.status(422).send('Invalid URL or image extension');
 
