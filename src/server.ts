@@ -1,7 +1,6 @@
-import express from 'express';
+import express,{Request,Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
-
 (async () => {
 
   // Init the Express application
@@ -14,13 +13,16 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   app.use(bodyParser.json());
 
   //@TODO1 SOLUTION
-  app.get('/filteredimage',async(request,response)=>{
+  app.get('/filteredimage',async(req: Request, res: Response)=>{
 
-    //parsing the parameter recived from the query sent
-    let { image_url} = request.query;
+    //parsing the parameter recived from the query sent and 
+    //it automatically sets the variable type to string 
+    //to see that you can hover on the variable, 
+    //with the help of QueryString.ParsedQs | string[] | QueryString.ParsedQs[] 
+    let { image_url}= req.query;
     
     if(image_url.length === 0){
-      return response.status(422).send('Empity URL observed!');
+      return res.status(422).send('Empity URL observed!');
     }
        
     else{
@@ -34,16 +36,16 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
      const invalidProtocol = (image_url.match(/\.(jpeg|jpg|gif|png)$/) != null);
       if(!invalidProtocol)
-      return response.status(422).send('Invalid URL or image extension');
+      return res.status(422).send('Invalid URL or image extension');
 
       imageFilterPath = await filterImageFromURL(image_url);
-      response.status(200).sendFile(imageFilterPath);
+      res.status(200).sendFile(imageFilterPath);
       setTimeout(() => deleteLocalFiles([imageFilterPath]),1000);
 
     }
     catch (e){
       console.log(e);
-      response.status(500).send('Server Error or the requested image url removed for some reason');
+      res.status(500).send('Server Error or the requested image url removed for some reason');
     } 
   }
   })
@@ -52,7 +54,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
-    res.send("try GET /filteredimage?image_url={{}}")
+    res.send("Please try GET /filteredimage?image_url={{}}")
   } );
   
 
